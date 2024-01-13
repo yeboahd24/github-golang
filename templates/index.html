@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub User Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles for the circular image */
+    .avatar {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Custom styles for the background image */
+    body {
+      background: url('https://source.unsplash.com/random') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /* Additional styles for better appearance */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-wrapper {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body class="p-6">
+  <div class="container">
+    <div class="form-wrapper">
+      <h1 class="text-4xl mb-4">GitHub User Info</h1>
+      <form id="userForm" class="flex items-center mb-4">
+        <input type="text" id="username" placeholder="GitHub Username" class="border p-2 mr-2">
+        <button type="submit" class="bg-blue-500 text-white p-2">Fetch Data</button>
+      </form>
+      <div id="userInfo" class="flex flex-col items-center"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('userForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var username = document.getElementById('username').value;
+      fetch('/fetch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'username=' + username
+        })
+        .then(response => response.json())
+        .then(data => {
+          var userInfoDiv = document.getElementById('userInfo');
+          userInfoDiv.innerHTML = `
+            <img src="${data.avatar_url}" alt="Avatar" class="avatar">
+            <p>Username: ${data.login}</p>
+            <p>Name: ${data.name || 'N/A'}</p>
+            <p>Stars: ${data.star_count || 'N/A'}</p>
+            <p>Public Repositories: ${data.public_repos}</p>
+          `;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+
+</html>
